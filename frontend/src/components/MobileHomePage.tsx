@@ -38,9 +38,7 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
             <h1 className="text-2xl font-bold mb-2">{getGreeting()}! 👋</h1>
             <p className="text-indigo-100 dark:text-gray-300">Hier ist dein täglicher Überblick</p>
           </div>
-          <div className="bg-white/20 p-2 rounded-full">
-            <ThemeToggle />
-          </div>
+          <ThemeToggle />
         </div>
       </div>
 

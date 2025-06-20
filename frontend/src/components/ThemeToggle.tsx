@@ -2,8 +2,12 @@ import React from 'react';
 
 import { useTheme } from '../contexts/ThemeContext';
 
-const ThemeToggle: React.FC = () => {
-  const { theme, currentTheme, setTheme } = useTheme();
+interface ThemeToggleProps {
+  className?: string;
+}
+
+const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
+  const { theme, setTheme } = useTheme();
 
   const handleThemeChange = () => {
     const themes: ('light' | 'dark' | 'system')[] = ['light', 'dark', 'system'];
@@ -11,6 +15,7 @@ const ThemeToggle: React.FC = () => {
     const nextTheme = themes[(currentIndex + 1) % themes.length];
     setTheme(nextTheme);
   };
+  
   const getAriaLabel = () => {
     switch (theme) {
       case 'light': return 'Zum dunklen Design wechseln';
@@ -48,16 +53,11 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={handleThemeChange}
-      className="ml-auto relative p-2 rounded-lg bg-white/20 hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30 transition-all duration-300 ease-in-out group"
+      className={`relative p-2 rounded-full bg-white/20 hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30 transition-all duration-300 ease-in-out ${className}`}
       aria-label={getAriaLabel()}
     >
       <div className="transform transition-transform duration-300">
         {getIcon()}
-      </div>
-      
-      {/* Animation Ripple Effect */}
-      <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-amber-600 dark:from-indigo-600 dark:to-indigo-800 opacity-20 rounded-lg transform scale-0 group-hover:scale-100 transition-transform duration-500" />
       </div>
     </button>
   );
