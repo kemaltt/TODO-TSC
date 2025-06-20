@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
 import './TodoApp.css' // Importieren der spezifischen Todo-App-Stile
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Komponenten importieren
 import TodoForm from './components/TodoForm';
@@ -14,6 +15,14 @@ import DeleteConfirmationModal from './components/DeleteConfirmationModal';
 import MobileLayout from './components/MobileLayout';
 
 function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');

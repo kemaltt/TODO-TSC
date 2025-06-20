@@ -148,3 +148,103 @@ input:focus, textarea:focus {
 .todo-item-enter {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+/* Dark Mode Styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #111827;
+  color: #e5e7eb;
+}
+
+/* Dark mode specific styles */
+.dark .todo-container {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.dark input, 
+.dark textarea {
+  background-color: #111827;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.dark input:focus, 
+.dark textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Theme Toggle Animation */
+.theme-toggle-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.theme-toggle-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 200ms ease-in, transform 200ms ease-in;
+}
+
+.theme-toggle-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.theme-toggle-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+/* Dark mode transitions */
+.dark .todo-item {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.dark .todo-item:hover {
+  background-color: #2d3748;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Dark mode form elements */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6b7280;
+}
+
+.dark .validation-error {
+  border-color: #ef4444;
+}
+
+/* Dark mode mobile specific */
+@media (max-width: 640px) {
+  .dark .mobile-header {
+    background-color: #111827;
+    border-color: #374151;
+  }
+
+  .dark .bottom-nav {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+
+  .dark .nav-item {
+    color: #9ca3af;
+  }
+
+  .dark .nav-item.active {
+    color: #6366f1;
+  }
+}

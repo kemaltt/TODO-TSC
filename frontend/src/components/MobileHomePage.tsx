@@ -1,5 +1,7 @@
 import React from 'react';
 import type { Todo } from '../services/todoService';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface MobileHomePageProps {
   todos: Todo[];
@@ -14,6 +16,7 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
   onAllTodosClick,
   onFilteredListClick 
 }) => {
+
   // İstatistikleri hesapla
   const completedTodos = todos.filter(todo => todo.completed).length;
   const activeTodos = todos.filter(todo => !todo.completed).length;
@@ -30,9 +33,14 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Hoş geldin kartı */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-b-3xl shadow-lg">
-        <h1 className="text-2xl font-bold mb-2">{getGreeting()}! 👋</h1>
-        <p className="text-indigo-100">Hier ist dein täglicher Überblick</p>
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-gray-800 dark:to-gray-900 text-white p-6 rounded-b-3xl shadow-lg transition-colors duration-300">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-bold mb-2">{getGreeting()}! 👋</h1>
+            <p className="text-indigo-100 dark:text-gray-300">Hier ist dein täglicher Überblick</p>
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* İstatistik kartları - Tıklanabilir yapıyoruz */}
@@ -41,17 +49,17 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => onFilteredListClick('active')}
-              className="bg-indigo-50 p-4 rounded-xl text-left hover:bg-indigo-100 transition-colors"
+              className="bg-indigo-50 dark:bg-indigo-900/50 p-4 rounded-xl text-left hover:bg-indigo-100 dark:hover:bg-indigo-900/70 transition-colors"
             >
-              <span className="text-2xl font-bold text-indigo-600">{activeTodos}</span>
-              <p className="text-sm text-indigo-900">Offene Aufgaben</p>
+              <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{activeTodos}</span>
+              <p className="text-sm text-indigo-900 dark:text-indigo-100">Offene Aufgaben</p>
             </button>
             <button
               onClick={() => onFilteredListClick('completed')}
-              className="bg-green-50 p-4 rounded-xl text-left hover:bg-green-100 transition-colors"
+              className="bg-green-50 dark:bg-green-900/50 p-4 rounded-xl text-left hover:bg-green-100 dark:hover:bg-green-900/70 transition-colors"
             >
-              <span className="text-2xl font-bold text-green-600">{completedTodos}</span>
-              <p className="text-sm text-green-900">Erledigte Aufgaben</p>
+              <span className="text-2xl font-bold text-green-600 dark:text-green-400">{completedTodos}</span>
+              <p className="text-sm text-green-900 dark:text-green-100">Erledigte Aufgaben</p>
             </button>
           </div>
         </div>
@@ -71,7 +79,7 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-900">Neue Aufgabe</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Neue Aufgabe</span>
             </div>
           </button>
           <button
@@ -84,7 +92,7 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-900">Alle Aufgaben</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Alle Aufgaben</span>
             </div>
           </button>
         </div>

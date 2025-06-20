@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import TodoForm from './TodoForm';
 import MobileHomePage from './MobileHomePage';
 import type { Todo } from '../services/todoService';
+import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Tema ve dil seçenekleri için tipler
 type Theme = 'light' | 'dark' | 'system';
@@ -188,6 +190,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState('home');
   const [showAddForm, setShowAddForm] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const handleAddClick = () => {
     setShowAddForm(true);
@@ -213,12 +216,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-gray-50">
       {/* Header */}
-      <header className={`bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 shadow-md sm:hidden ${activeTab === 'home' ? 'hidden' : ''}`}>
+      <header className={`bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-gray-800 dark:to-gray-900 text-white p-4 shadow-md sm:hidden transition-colors duration-300 ${activeTab === 'home' ? 'hidden' : ''}`}>
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">Todo App</h1>
+          <div className="flex items-center space-x-4">
+            <ThemeToggle isDark={theme === 'dark'} onToggle={toggleTheme} />
+            <h1 className="text-xl font-bold">Todo App</h1>
+          </div>
           {activeTab === 'todos' && (
             <button 
-              className="p-2 rounded-full hover:bg-white/10"
+              className="p-2 rounded-full hover:bg-white/10 transition-colors duration-200"
               onClick={handleAddClick}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
