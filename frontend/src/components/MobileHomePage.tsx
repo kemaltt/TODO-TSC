@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Todo } from '../services/todoService';
 import ThemeToggle from './ThemeToggle';
-import { useTheme } from '../contexts/ThemeContext';
 
 interface MobileHomePageProps {
   todos: Todo[];
@@ -31,7 +30,7 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full max-h-screen pb-4">
       {/* Hoş geldin kartı */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-gray-800 dark:to-gray-900 text-white p-6 rounded-b-3xl shadow-lg transition-colors duration-300">
         <div className="flex justify-between items-start">
@@ -39,13 +38,15 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
             <h1 className="text-2xl font-bold mb-2">{getGreeting()}! 👋</h1>
             <p className="text-indigo-100 dark:text-gray-300">Hier ist dein täglicher Überblick</p>
           </div>
-          <ThemeToggle />
+          <div className="bg-white/20 p-2 rounded-full">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 
       {/* İstatistik kartları - Tıklanabilir yapıyoruz */}
       <div className="px-4 -mt-6">
-        <div className="bg-white rounded-2xl shadow-lg p-4 mb-6">
+        <div className="bg-white rounded-2xl shadow-lg p-4 mb-4">
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => onFilteredListClick('active')}
@@ -66,8 +67,8 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
       </div>
 
       {/* Hızlı eylemler */}
-      <div className="px-4 mb-6">
-        <h2 className="text-lg font-semibold mb-3">Schnellzugriff</h2>
+      <div className="px-4 mb-4">
+        <h2 className="text-lg font-semibold mb-2">Schnellzugriff</h2>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={onAddClick}
@@ -100,8 +101,8 @@ const MobileHomePage: React.FC<MobileHomePageProps> = ({
       
       {/* Yüksek öncelikli görevler uyarısı */}
       {highPriorityTodos > 0 && (
-        <div className="px-4 mb-6">
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+        <div className="px-4 mb-4">
+          <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded-r-xl">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

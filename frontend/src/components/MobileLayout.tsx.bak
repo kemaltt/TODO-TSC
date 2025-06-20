@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import TodoForm from './TodoForm';
 import MobileHomePage from './MobileHomePage';
 import type { Todo } from '../services/todoService';
 import ThemeToggle from './ThemeToggle';
 import { useTheme } from '../contexts/ThemeContext';
-import TodoForm from './TodoForm';
-import { toast } from 'react-toastify';
 
 // Tema ve dil seçenekleri için tipler
 type Theme = 'light' | 'dark' | 'system';
@@ -50,73 +49,126 @@ const Settings: React.FC = () => {
 
     // PWA yükleme olayını dinle
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Eğer PWA zaten yüklüyse
+    window.addEventListener('appinstalled', () => {
+      // Yükleme butonunu gizle
+      setIsPWAInstallable(false);
+      // Promptu temizle
+      setDeferredPrompt(null);
+    });
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, []);
 
+  // PWA yükleme fonksiyonu
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
 
-    // Show the install prompt
+    // Yükleme promptunu göster
     deferredPrompt.prompt();
     
-    // Wait for the user to respond to the prompt
-    const choiceResult = await deferredPrompt.userChoice;
+    // Kullanıcının yanıtını bekle
+    const { outcome } = await deferredPrompt.userChoice;
     
-    // Reset the deferred prompt variable
-    setDeferredPrompt(null);
-    setIsPWAInstallable(false);
-
-    if (choiceResult.outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+    if (outcome === 'accepted') {
+      console.log('PWA yüklendi');
     } else {
-      console.log('User dismissed the install prompt');
+      console.log('PWA yükleme reddedildi');
     }
-  };
-
-  const { theme: currentTheme, setTheme } = useTheme();
-
-  const handleThemeChange = (value: Theme) => {
-    setSettings({...settings, theme: value});
-    setTheme(value);
-  };
-
-  const handleLanguageChange = (value: Language) => {
-    setSettings({...settings, language: value});
-  };
-
-  const handleNotificationToggle = () => {
-    setSettings({...settings, notifications: !settings.notifications});
-  };
-
-  const handleSortOrderChange = (value: SortOrder) => {
-    setSettings({...settings, sortOrder: value});
+    
+    // Promptu temizle
+    setDeferredPrompt(null);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Tema Ayarları */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Theme</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Aktuelles Theme</span>
-            <div className="flex items-center">
-              <ThemeToggle />
-            </div>
+    <div className="flex flex-col h-full">
+      {/* Header mit ThemeToggle */}
+      <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+        <h1 className="text-lg font-semibold dark:text-white">Einstellungen</h1>
+        <ThemeToggle />
+      </div>
+      
+      <div className="flex-1 overflow-auto p-4 space-y-6">
+        {/* Tema Seçimi */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Erscheinungsbild</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-700 dark:text-gray-300">Design</span>
+              <select 
+              value={settings.theme}
+              onChange={(e) => setSettings({...settings, theme: e.target.value as Theme})}
+              className="form-select rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+              <option value="system">System</option>
+              <option value="light">Hell</option>
+              <option value="dark">Dunkel</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Dil Ayarları */}
+      {/* Sıralama Tercihleri */}
       <div className="space-y-2">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Sprache</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+        <h3 className="text-lg font-medium text-gray-900">Sortierung</h3>
+        <div className="bg-white rounded-lg shadow p-4">
+          <select 
+            value={settings.sortOrder}
+            onChange={(e) => setSettings({...settings, sortOrder: e.target.value as SortOrder})}
+            className="w-full form-select rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          >
+            <option value="creation">Nach Erstellungsdatum</option>
+            <option value="priority">Nach Priorität</option>
+            <option value="dueDate">Nach Fälligkeit</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Bildirim Ayarları */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium text-gray-900">Benachrichtigungen</h3>
+        <div className="bg-white rounded-lg shadow p-4">
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={settings.notifications}
+              onChange={(e) => setSettings({...settings, notifications: e.target.checked})}
+              className="form-checkbox h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+            />
+            <span className="text-gray-700">Benachrichtigungen aktivieren</span>
+          </label>
+        </div>
+      </div>
+
+      {/* PWA Yükleme */}
+      {isPWAInstallable && (
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium text-gray-900">App Installation</h3>
+          <div className="bg-white rounded-lg shadow p-4">
+            <button 
+              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              onClick={handleInstallClick}
+            >
+              Als App installieren
+            </button>
+            <p className="mt-2 text-sm text-gray-500">
+              Installieren Sie die App auf Ihrem Gerät für schnelleren Zugriff und bessere Performance.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Dil Seçimi */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-medium text-gray-900">Sprache</h3>
+        <div className="bg-white rounded-lg shadow p-4">
           <select 
             value={settings.language}
-            onChange={(e) => handleLanguageChange(e.target.value as Language)}
-            className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            onChange={(e) => setSettings({...settings, language: e.target.value as Language})}
+            className="w-full form-select rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
           >
             <option value="de">Deutsch</option>
             <option value="en">English</option>
@@ -125,66 +177,39 @@ const Settings: React.FC = () => {
         </div>
       </div>
 
-      {/* Bildirim Ayarları */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Benachrichtigungen</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Benachrichtigungen aktivieren</span>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                checked={settings.notifications} 
-                onChange={handleNotificationToggle}
-                className="sr-only peer" 
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* PWA Kurulum */}
-      {isPWAInstallable && (
-        <div className="space-y-2">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white">App-Installation</h3>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <button
-              onClick={handleInstallClick}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Als App installieren
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Uygulama Bilgileri */}
       <div className="space-y-2">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Info</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-2">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Version: 1.0.0</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">© 2025 Todo App</p>
+        <h3 className="text-lg font-medium text-gray-900">Info</h3>
+        <div className="bg-white rounded-lg shadow p-4 space-y-2">
+          <p className="text-sm text-gray-600">Version: 1.0.0</p>
+          <p className="text-sm text-gray-600">© 2025 Todo App</p>
         </div>
       </div>
     </div>
   );
 };
 
-// MobileLayout Komponente
 const MobileLayout: React.FC<MobileLayoutProps> = ({ 
   children, 
   onAddTodo, 
   todos,
   onFilterChange 
 }) => {
-  const { theme } = useTheme();
-  const [activeTab, setActiveTab] = useState<'home' | 'todos' | 'settings' | 'new'>('home');
+  // Theme-Hook in einer Variablen speichern
+  const themeContext = useTheme();
+  const theme = themeContext ? themeContext.theme : 'light';
+  const [activeTab, setActiveTab] = useState<'home' | 'todos' | 'settings'>('home');
+  const [showAddForm, setShowAddForm] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   
+  const handleAddTodo = (title: string, description: string, priority: 'low' | 'medium' | 'high') => {
+    onAddTodo(title, description, priority);
+    setShowAddForm(false);
+    setValidationError(null);
+  };
+  
   const handleAddTodoClick = () => {
-    // Zum neuen Tab für das Hinzufügen von Todos wechseln
-    setActiveTab('new');
+    setShowAddForm(true);
   };
 
   const handleAllTodosClick = () => {
@@ -198,58 +223,45 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   };
 
   return (
-    <div className={`h-screen flex flex-col ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
-      {/* Header mit ThemeToggle wurde entfernt */}
+    <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Header mit ThemeToggle rechts */}
+      <header className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-sm z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {activeTab === 'home' ? 'Home' : 
+               activeTab === 'todos' ? 'Aufgaben' : 
+               'Einstellungen'}
+            </h1>
+            <div className="ml-auto">
+              <ThemeToggle />
+            </div>
+          </div>
+        </div>
+      </header>
 
-      {/* Hauptinhalt ohne Abstand für Header */}
-      <main className="flex-1 overflow-hidden dark:bg-gray-900 pt-0 pb-16">
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${activeTab === 'home' ? 'py-0' : 'py-4'}`}>
+      {/* Hauptinhalt mit Abstand für Header */}
+      <main className="pt-16 pb-20 flex-1 relative z-0 overflow-y-auto dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {activeTab === 'home' ? (
             <MobileHomePage
               todos={todos}
-              onAddClick={handleAddTodoClick}
+              onAddTodoClick={handleAddTodoClick}
               onAllTodosClick={handleAllTodosClick}
               onFilteredListClick={handleFilteredListClick}
             />
-          ) : activeTab === 'new' ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Neue Aufgabe erstellen</h1>
-              <TodoForm
-                onAddTodo={(title, description, priority) => {
-                  onAddTodo(title, description, priority);
-                  setActiveTab('todos'); // Nach dem Hinzufügen zur Todo-Liste wechseln
-                  toast.success('Aufgabe erfolgreich hinzugefügt!');
-                }}
-                validationError={validationError}
-                onValidationError={setValidationError}
-              />
-              <div className="mt-4">
-                <button
-                  onClick={() => setActiveTab('home')}
-                  className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                >
-                  Zurück zur Startseite
-                </button>
-              </div>
-            </div>
           ) : activeTab === 'todos' ? (
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Aufgaben</h1>
-              {children}
-            </div>
+            children
           ) : (
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Einstellungen</h1>
-              <Settings />
-            </div>
+            <Settings />
           )}
         </div>
       </main>
 
-      {/* Bottom Navigation - nur auf mobilen Geräten anzeigen */}
-      <nav className="md:hidden fixed bottom-0 w-full bg-white dark:bg-gray-800 shadow-lg h-16">
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 w-full bg-white dark:bg-gray-800 shadow-lg">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16">
+          <div className="flex justify-around h-16">
             <button
               onClick={() => setActiveTab('home')}
               className={`flex flex-col items-center justify-center w-full ${
@@ -296,7 +308,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         </div>
       </nav>
 
-      {/* Modal für das TodoForm - nicht mehr verwendet, da wir direkt zur Todo-Seite wechseln
+      {/* Modal für das TodoForm */}
       {showAddForm && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -327,7 +339,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           </div>
         </div>
       )}
-      */}
     </div>
   );
 };

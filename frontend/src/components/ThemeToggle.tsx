@@ -48,7 +48,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={handleThemeChange}
-      className="relative p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-300 ease-in-out group"
+      className="ml-auto relative p-2 rounded-lg bg-white/20 hover:bg-white/30 dark:bg-gray-800/20 dark:hover:bg-gray-800/30 transition-all duration-300 ease-in-out group"
       aria-label={getAriaLabel()}
     >
       <div className="transform transition-transform duration-300">
