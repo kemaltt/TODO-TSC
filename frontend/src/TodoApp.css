@@ -1,0 +1,150 @@
+/* Todo App Styles */
+
+/* Title and description text handling */
+.break-words {
+  word-break: break-word;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.todo-description {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-line;
+}
+
+/* Validation error message */
+.validation-error {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+  40%, 60% { transform: translate3d(2px, 0, 0); }
+}
+
+/* Input focus styles */
+input:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+  border-color: #6366f1;
+}
+
+/* Input and textarea with better padding for mobile */
+@media (max-width: 640px) {
+  input, textarea {
+    font-size: 16px !important; /* Prevents zooming on iOS */
+    padding: 0.75rem !important;
+  }
+}
+
+/* Animations and Transitions */
+.todo-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+}
+
+.todo-item:hover {
+  transform: translateY(-2px);
+}
+
+.todo-item.completed-item {
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  opacity: 0.7;
+}
+
+/* Custom checkbox styling */
+.checkbox-custom {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.checkbox-custom:checked {
+  animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Priority indicators */
+.priority-high {
+  border-left-color: #ef4444;
+  box-shadow: 0 1px 3px 0 rgba(239, 68, 68, 0.1);
+}
+
+.priority-medium {
+  border-left-color: #f59e0b;
+  box-shadow: 0 1px 3px 0 rgba(245, 158, 11, 0.1);
+}
+
+.priority-low {
+  border-left-color: #10b981;
+  box-shadow: 0 1px 3px 0 rgba(16, 185, 129, 0.1);
+}
+
+/* Button animations */
+.btn-add {
+  transition: all 0.2s ease;
+}
+
+.btn-add:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+}
+
+.btn-add:active {
+  transform: translateY(0);
+}
+
+/* Filter buttons */
+.filter-btn {
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Empty state illustration */
+.empty-state-illustration svg {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Todo container animations */
+.todo-container {
+  transition: all 0.3s ease;
+}
+
+.todo-container:hover {
+  border-color: #a5b4fc;
+}
+
+/* Date badge */
+.date-badge {
+  font-size: 0.7rem;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Fade in animation for new todos */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.todo-item-enter {
+  animation: fadeIn 0.3s ease-out forwards;
+}
